@@ -3,27 +3,35 @@ package handlers
 import (
 	"go-paslons-crud/config"
 	"go-paslons-crud/models"
+	"go-paslons-crud/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 func CreatePaslons(c *gin.Context) {
-	var paslonCreate models.Paslons
+	name := c.PostForm("name")
+	visi := c.PostForm("visi")
 
-	if err := c.ShouldBindJSON(&paslonCreate)
-	err != nil {
-		c.JSON(400, gin.H{"Error": err.Error()})
-	}
+	formfile, _, err := c.Request.FormFile("image")
+    if err != nil {
+        c.JSON(400, gin.H{"error": err.Error()})
+        return
+    }
+
+	uploadUrl, err := services.NewMediaUpload().FileUpload(models.File{File: formfile})
+    if err != nil {
+        c.JSON(400, gin.H{"error": err.Error()})
+        return
+    }
 
 	paslonModel := models.Paslons{
-		Name: paslonCreate.Name,
-		Visi: paslonCreate.Visi,
-		Image: paslonCreate.Image,
+        Name:  name,
+        Visi:  visi,
+        Image: uploadUrl,
 	}
 
 	config.DB.Create(&paslonModel)
-
-	c.JSON(200, paslonModel)
+    c.JSON(200, paslonModel)
 }
 
 func GetPaslons(c *gin.Context) {
@@ -57,6 +65,18 @@ func UpadatePaslon(c *gin.Context) {
 
 	c.Bind(&paslonBody)
 
+	formfile, _, err := c.Request.FormFile("image")
+    if err != nil {
+        c.JSON(400, gin.H{"error": err.Error()})
+        return
+    }
+
+	uploadUrl, err := services.NewMediaUpload().FileUpload(models.File{File: formfile})
+    if err != nil {
+        c.JSON(400, gin.H{"error": err.Error()})
+        return
+    }
+
 	var paslons models.Paslons
 	
 	config.DB.First(&paslons, id)
@@ -64,7 +84,7 @@ func UpadatePaslon(c *gin.Context) {
 	config.DB.Model(&paslons).Updates(models.Paslons{
 		Name: paslonBody.Name,
 		Visi: paslonBody.Visi,
-		Image: paslonBody.Image,
+		Image: uploadUrl,
 	})
 
 	c.JSON(200, paslons)

@@ -1,14 +1,14 @@
-package main
+package migrations
 
 import (
 	"go-paslons-crud/config"
 	"go-paslons-crud/models"
 )
 
-func init() {
-	config.ConnectToDB()
-}
-
-func main() {
-	config.DB.AutoMigrate(&models.Paslons{})
+func MigrationsDB() {
+	config.DB.AutoMigrate(
+		&models.Paslons{},
+		&models.Parties{},
+		&models.Votes{},
+	)
 }

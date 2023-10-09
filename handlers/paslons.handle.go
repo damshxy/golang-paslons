@@ -37,20 +37,19 @@ func CreatePaslons(c *gin.Context) {
 func GetPaslons(c *gin.Context) {
 	var paslons []models.Paslons
 	
-	if err := config.DB.Find(&paslons)
+	config.DB.Preload("Votes").Preload("Parties").Find(&paslons)
 
-	err.Error != nil {
-		c.JSON(404, gin.H{"Error": "Paslons not found !!!"})
-	}
-
-	c.JSON(200, paslons)
+	c.JSON(200, gin.H{
+		"message": "paslons data found",
+		"paslons": paslons,
+	})
 }
 
 func GetPaslonById(c *gin.Context) {
 	id := c.Param("id")
 	var paslons models.Paslons
 
-	config.DB.First(&paslons, id)
+	config.DB.Preload("Votes").Preload("Parties").First(&paslons, id)
 
 	c.JSON(200, paslons)
 }
@@ -60,34 +59,22 @@ func UpadatePaslon(c *gin.Context) {
 	var paslonBody struct {
 		Name string
 		Visi string
-		Image string
 	}
 
 	c.Bind(&paslonBody)
 
-	formfile, _, err := c.Request.FormFile("image")
-    if err != nil {
-        c.JSON(400, gin.H{"error": err.Error()})
-        return
-    }
-
-	uploadUrl, err := services.NewMediaUpload().FileUpload(models.File{File: formfile})
-    if err != nil {
-        c.JSON(400, gin.H{"error": err.Error()})
-        return
-    }
-
 	var paslons models.Paslons
-	
 	config.DB.First(&paslons, id)
 
 	config.DB.Model(&paslons).Updates(models.Paslons{
 		Name: paslonBody.Name,
 		Visi: paslonBody.Visi,
-		Image: uploadUrl,
 	})
 
-	c.JSON(200, paslons)
+	c.JSON(200, gin.H{
+		"message": "Update data succesfully",
+		"paslons": paslons,
+	})
 }
 
 func DeletePaslon(c *gin.Context) {

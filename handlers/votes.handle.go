@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"go-paslons-crud/config"
+	"go-paslons-crud/database"
 	"go-paslons-crud/models"
 
 	"github.com/gin-gonic/gin"
@@ -27,7 +27,7 @@ func CreateVotes(c *gin.Context) {
 		})
 	}
 
-	config.DB.Preload("Paslons").Create(&votesCreate)
+	database.DB.Preload("Paslons").Create(&votesCreate)
 
 	c.JSON(200, gin.H{
 		"message": "create data succesfully",
@@ -38,7 +38,7 @@ func CreateVotes(c *gin.Context) {
 func GetVotes(c *gin.Context) {
 	var votes []models.Votes
 
-	config.DB.Preload("Paslons").Find(&votes)
+	database.DB.Preload("Paslons").Find(&votes)
 
 	c.JSON(200, gin.H{
 		"message": "data found",
@@ -50,7 +50,7 @@ func GetVotesById(c *gin.Context) {
 	id := c.Param("id")
 	var votes models.Votes
 
-	config.DB.Preload("Paslons").First(&votes, id)
+	database.DB.Preload("Paslons").First(&votes, id)
 
 	c.JSON(200, votes)
 }
@@ -66,8 +66,8 @@ func UpdateVotes(c *gin.Context) {
 
 	var votes []models.Votes
 
-	config.DB.First(&votes, id)
-	config.DB.Model(&votes).Updates(models.Votes{
+	database.DB.First(&votes, id)
+	database.DB.Model(&votes).Updates(models.Votes{
 		VoterName: votesBody.VoterName,
 		PaslonsID: votesBody.PaslonsID,
 	})
@@ -81,7 +81,7 @@ func UpdateVotes(c *gin.Context) {
 func DeleteVotes(c *gin.Context) {
 	id := c.Param("id")
 
-	config.DB.Delete(&models.Votes{}, id)
+	database.DB.Delete(&models.Votes{}, id)
 
 	c.JSON(200, gin.H{
 		"message": "Votes Deleted !!!",

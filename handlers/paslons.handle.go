@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"go-paslons-crud/config"
+	"go-paslons-crud/database"
 	"go-paslons-crud/models"
 	"go-paslons-crud/utils"
 
@@ -30,14 +30,14 @@ func CreatePaslons(c *gin.Context) {
         Image: uploadUrl,
 	}
 
-	config.DB.Create(&paslonModel)
+	database.DB.Create(&paslonModel)
     c.JSON(200, paslonModel)
 }
 
 func GetPaslons(c *gin.Context) {
 	var paslons []models.Paslons
 	
-	config.DB.Preload("Votes").Preload("Parties").Find(&paslons)
+	database.DB.Preload("Votes").Preload("Parties").Find(&paslons)
 
 	c.JSON(200, gin.H{
 		"message": "paslons data found",
@@ -49,7 +49,7 @@ func GetPaslonById(c *gin.Context) {
 	id := c.Param("id")
 	var paslons models.Paslons
 
-	config.DB.Preload("Votes").Preload("Parties").First(&paslons, id)
+	database.DB.Preload("Votes").Preload("Parties").First(&paslons, id)
 
 	c.JSON(200, paslons)
 }
@@ -64,9 +64,9 @@ func UpadatePaslon(c *gin.Context) {
 	c.Bind(&paslonBody)
 
 	var paslons models.Paslons
-	config.DB.First(&paslons, id)
+	database.DB.First(&paslons, id)
 
-	config.DB.Model(&paslons).Updates(models.Paslons{
+	database.DB.Model(&paslons).Updates(models.Paslons{
 		Name: paslonBody.Name,
 		Visi: paslonBody.Visi,
 	})
@@ -80,7 +80,7 @@ func UpadatePaslon(c *gin.Context) {
 func DeletePaslon(c *gin.Context) {
 	id := c.Param("id")
 
-	config.DB.Delete(&models.Paslons{}, id)
+	database.DB.Delete(&models.Paslons{}, id)
 
 	c.JSON(200, gin.H{"message": "Paslon Deleted !!!"})
 }

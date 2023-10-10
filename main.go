@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go-paslons-crud/config"
-	"go-paslons-crud/config/migrations"
+	"go-paslons-crud/database"
+	"go-paslons-crud/database/migrations"
 	"go-paslons-crud/routes"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +11,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	config.ConnectToDB()
+	database.ConnectToDB()
 	migrations.MigrationsDB()
 
 

@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"go-paslons-crud/config"
+	"go-paslons-crud/database"
 	"go-paslons-crud/models"
 
 	"github.com/gin-gonic/gin"
@@ -27,7 +27,7 @@ func CreateParties(c *gin.Context) {
 		})
 	}
 
-	config.DB.Preload("Paslons").Create(&partiesCreate)
+	database.DB.Preload("Paslons").Create(&partiesCreate)
 
 	c.JSON(200, gin.H{
 		"message": "Create data succesfully",
@@ -38,7 +38,7 @@ func CreateParties(c *gin.Context) {
 func GetParties(c *gin.Context) {
 	var parties []models.Parties
 
-	config.DB.Preload("Paslons").Find(&parties)
+	database.DB.Preload("Paslons").Find(&parties)
 
 	c.JSON(200, gin.H{
 		"message": "Data Parties Found !!!",
@@ -51,7 +51,7 @@ func GetPartiesById(c *gin.Context) {
 
 	var parties models.Parties
 
-	config.DB.Preload("Paslons").First(&parties, id)
+	database.DB.Preload("Paslons").First(&parties, id)
 
 	c.JSON(200, gin.H{
 		"message": "Data found !!!",
@@ -69,9 +69,9 @@ func UpdateParties(c *gin.Context) {
 	c.Bind(&partiesBody)
 
 	var parties models.Parties
-	config.DB.First(&parties, id)
+	database.DB.First(&parties, id)
 	
-	config.DB.Model(&parties).Preload("Paslons").Updates(models.Parties{
+	database.DB.Model(&parties).Preload("Paslons").Updates(models.Parties{
 		Name: partiesBody.Name,
 	})
 
@@ -84,7 +84,7 @@ func UpdateParties(c *gin.Context) {
 func DeleteParties(c *gin.Context) {
 	id := c.Param("id")
 
-	config.DB.Delete(&models.Parties{}, id)
+	database.DB.Delete(&models.Parties{}, id)
 
 	c.JSON(200, gin.H{
 		"message": "Parties Deleted !!!",

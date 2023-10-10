@@ -3,7 +3,7 @@ package handlers
 import (
 	"go-paslons-crud/config"
 	"go-paslons-crud/models"
-	"go-paslons-crud/services"
+	"go-paslons-crud/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +18,7 @@ func CreatePaslons(c *gin.Context) {
         return
     }
 
-	uploadUrl, err := services.NewMediaUpload().FileUpload(models.File{File: formfile})
+	uploadUrl, err := utils.NewMediaUpload().FileUpload(models.File{File: formfile})
     if err != nil {
         c.JSON(400, gin.H{"error": err.Error()})
         return

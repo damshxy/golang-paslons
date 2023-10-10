@@ -1,4 +1,4 @@
-package services
+package utils
 
 import (
 	"go-paslons-crud/helper"
